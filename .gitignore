@@ -6,3 +6,4 @@ __pycache__/
 journal.db
 *.pyc
 .DS_Store
+.DS_Store
