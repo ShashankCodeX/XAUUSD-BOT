@@ -13,6 +13,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from dotenv import load_dotenv
 from telegram import Update
+from telegram.error import InvalidToken, NetworkError
 from telegram.ext import Application, CommandHandler, ContextTypes
 
 from bot import data, news, risk, sessions
@@ -298,7 +299,8 @@ def build_application(token: str, tz_name: str, journal: Journal) -> Application
 
 
 def main() -> None:
-    load_dotenv()
+    # override=True: the .env file wins over any old value left in the terminal.
+    load_dotenv(override=True)
     logging.basicConfig(format="%(asctime)s %(levelname)s %(name)s: %(message)s", level=logging.INFO)
     # These libraries print the full request URL, which contains your bot token.
     for noisy in ("httpx", "httpcore"):
@@ -321,7 +323,17 @@ def main() -> None:
     # Newer Python versions no longer create an event loop automatically.
     asyncio.set_event_loop(asyncio.new_event_loop())
     logger.info("Gold Wolf Bot is running. Press Ctrl+C to stop.")
-    app.run_polling()
+    try:
+        app.run_polling()
+    except InvalidToken:
+        # 'from None' hides the long error, which would print the token.
+        raise SystemExit(
+            "Telegram rejected the token. Get a fresh one from @BotFather (/revoke) and update .env."
+        ) from None
+    except NetworkError:
+        raise SystemExit(
+            "Can't reach Telegram. Check your internet connection and try again."
+        ) from None
 
 
 if __name__ == "__main__":
