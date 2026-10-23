@@ -1,0 +1,6 @@
+python-telegram-bot>=22,<23
+yfinance
+pandas
+requests
+python-dotenv
+tzdata
