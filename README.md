@@ -101,6 +101,58 @@ You should see `Gold Wolf Bot is running`. Leave the terminal open: the bot only
 
 The bot stops when you close the terminal or your computer sleeps. For always-on use you need a computer or free cloud machine that stays on.
 
+### Mac shortcut: start the bot with one word
+
+Set this up **once** and you can start the bot by typing `goldbot` in any terminal, and stop it from another terminal with `goldstop`.
+
+1. Open a terminal **inside the project folder** (the folder that contains the `bot` folder):
+
+   ```
+   cd XAUUSD-BOT
+   ```
+
+2. Create the start shortcut. This saves the folder you are in, so it works wherever you cloned the project:
+
+   ```
+   echo "alias goldbot='cd \"$(pwd)\" && source .venv/bin/activate && caffeinate -i python -m bot.main'" >> ~/.zshrc
+   ```
+
+3. Create the stop shortcut:
+
+   ```
+   echo "alias goldstop='pkill -f bot.main'" >> ~/.zshrc
+   ```
+
+4. Turn the shortcuts on:
+
+   ```
+   source ~/.zshrc
+   ```
+
+5. Check they exist. You should see two lines:
+
+   ```
+   alias | grep gold
+   ```
+
+**Use it**
+
+| I want to... | Type |
+|---|---|
+| **Start** the bot (from any folder) | `goldbot` |
+| **Stop** the bot | Press `Ctrl + C` in its window, or type `goldstop` in a second terminal |
+
+What it does: `goldbot` goes to your project folder, turns on the `(.venv)` environment, and starts the bot. `caffeinate` keeps your Mac awake while the bot runs (closing a MacBook lid still puts it to sleep).
+
+**Notes**
+
+- Run the setup commands **once**. Running them twice just adds duplicate lines, which is harmless.
+- Shortcuts work in terminals opened **after** step 4. In an older window, type `source ~/.zshrc`.
+- Run only **one** copy of the bot at a time. Two copies cause a Telegram "Conflict" error. If that happens, type `goldstop`, wait a few seconds, then type `goldbot` once.
+- Restart the bot after you change `.env` or the code.
+- To remove the shortcuts, run `open -e ~/.zshrc`, delete the two `alias goldbot` and `alias goldstop` lines, and save.
+- Linux users can do the same with `~/.bashrc` instead of `~/.zshrc`, and leave out `caffeinate`.
+
 ## Troubleshooting
 
 | What you see | What it means and how to fix it |
